@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>英検準1級 Day 57 Phrasal Verbs Challenge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* =========================================
+       【ブラウザ版】ダーク・シック・鶯
+       ========================================= */
+    :root { 
+      --primary: #928c36; 
+      --bg: #1a1a1a; 
+      --text: #e0e0e0;
+      --card-bg: #2a2a2a;
+      --accent: #ffb3b3; 
+      --success: #81c784; 
+      --selected: #c0b94d; 
+      --target: rgba(146, 140, 54, 0.2); 
+    }
+    
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Nunito', 'Kosugi Maru', sans-serif; }
+    
+    .container { width: 210mm; margin: 20px auto; background: var(--card-bg); padding: 10mm 15mm; display: flex; flex-direction: column; box-shadow: 0 4px 20px rgba(0,0,0,0.5); box-sizing: border-box; border-radius: 8px; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); margin-bottom: 15px; padding-bottom: 5px; }
+    .header h1 { font-size: 22px; color: var(--primary); font-weight: 700; margin: 0; letter-spacing: 1px; }
+    .level-badge { font-size: 14px; background: var(--primary); color: white; padding: 2px 10px; border-radius: 12px; font-weight: bold; }
+    
+    .instruction { font-size: 13px; font-weight: bold; color: #bbb; margin: 10px 0 15px 0; padding-left: 10px; border-left: 4px solid var(--primary); }
+    
+    #exercise-content { display: flex; flex-direction: column; gap: 20px; }
+    .question-block { display: flex; flex-direction: column; gap: 10px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 6px; }
+    
+    .word-bank { 
+      font-weight: bold; font-size: 14px; color: var(--primary); 
+      background: #252525; border: 1px solid var(--primary); 
+      padding: 10px; border-radius: 4px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    }
+    .draggable-word {
+      cursor: pointer; padding: 4px 10px; border-radius: 4px; transition: all 0.2s;
+      border: 1px solid #444; background: #333; color: #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .draggable-word.selected { background: var(--selected); color: #000; border-color: #fff; transform: scale(1.05); }
+    .draggable-word.used { opacity: 0.2; text-decoration: line-through; pointer-events: none; background: #111; }
+    
+    .sentence-list { display: flex; flex-direction: column; gap: 8px; }
+    .sentence { font-size: 15px; line-height: 1.4; color: #ccc; }
+    
+    .blank { 
+      display: inline-block; min-width: 80px; border-bottom: 1.5px solid var(--primary); 
+      text-align: center; font-weight: bold; color: var(--accent); 
+      margin: 0 2px; padding: 0px 4px; cursor: pointer; height: 1.4em; vertical-align: bottom;
+    }
+    
+    .notes-container { margin-top: 25px; border-top: 1px solid #444; padding-top: 10px; font-size: 11px; color: #888; display: flex; flex-wrap: wrap; gap: 4px 15px; }
+    .notes-item b { color: var(--primary); }
+    
+    .controls { position: fixed; top: 15px; left: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+    button { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
+
+    /* =========================================
+       【PDF印刷用】Day 56 最終版準拠（陰影なし・最適化）
+       ========================================= */
+    @media print {
+      @page { size: A4; margin: 7mm 11mm; }
+      body { background: white !important; color: black !important; }
+      .controls, .browser-only, .level-badge, .group-header { display: none !important; }
+      .container { width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; background: white !important; }
+      
+      .header h1 { visibility: hidden; position: relative; height: 26px; margin: 0; }
+      .header h1::after { 
+        content: "英検準1級 Day 57 動詞句"; 
+        visibility: visible; position: absolute; left: 0; top: 0;
+        color: black !important; font-size: 17pt !important;
+      }
+      .header { border-bottom: 1.5pt solid black !important; margin-bottom: 2mm !important; }
+      
+      .instruction { border-left: 2.5pt solid black !important; color: black !important; margin-bottom: 3.5mm !important; font-size: 9.5pt !important; padding: 0 0 0 8px !important; }
+      
+      .word-bank { 
+        background: white !important; border: 1pt solid black !important; 
+        color: black !important; padding: 1.8mm !important; margin-bottom: 1.8mm !important;
+        box-shadow: none !important;
+      }
+      .draggable-word { 
+        border: none !important; background: none !important; color: black !important; 
+        padding: 0 !important; box-shadow: none !important; font-size: 10.8pt !important;
+      }
+      .draggable-word::after { content: " / "; }
+      .draggable-word:last-child::after { content: ""; }
+      
+      .question-block { background: none !important; padding: 0 !important; gap: 1pt !important; margin-bottom: 4mm !important; }
+      .sentence { color: black !important; font-size: 10.8pt !important; line-height: 1.3 !important; margin-bottom: 1.5pt !important; }
+      .blank { border-bottom: 1pt solid black !important; color: white !important; min-width: 72px !important; height: 1.2em !important; }
+      
+      .notes-container { border-top: 1pt solid black !important; color: black !important; font-size: 9.2pt !important; margin-top: 4mm !important; gap: 1pt 14pt !important; line-height: 1.2 !important; }
+      .notes-item b { color: black !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="controls">
+  <button onclick="changeLevel(1)">Level 1 (Easy)</button>
+  <button onclick="changeLevel(2)" style="background: #6d6929;">Level 2 (Hard)</button>
+  <button onclick="checkAnswers()" style="background: #8b4513;">答え合わせ</button>
+  <button onclick="window.print()" style="background: #4a5d4e;">PDF保存 / 印刷</button>
+</div>
+
+<div class="container">
+  <div class="header">
+    <h1>Pre-1st Day 57 Phrasal Verbs</h1>
+    <span id="level-display" class="level-badge">Level 1</span>
+  </div>
+  <div class="instruction">
+    ★ Fill in the blanks with the correct words from the bank. (Change the form if necessary.)
+  </div>
+  <div id="exercise-content"></div>
+  <div id="notes-area" class="notes-container"></div>
+</div>
+
+<script>
+const masterData = [
+  { raw: "get away with", text: "In some corporate environments, high-performing executives sometimes [B] [B] [B] unethical behavior that would get others fired.", ans: ["get", "away", "with"] },
+  { raw: "give in to", text: "The government has vowed not to [B] [B] [B] the demands of the protesters, fearing it would set a dangerous precedent.", ans: ["give", "in", "to"] },
+  { raw: "glare at", text: "The defense attorney continued to [B] [B] the witness during the cross-examination to make them feel uncomfortable.", ans: ["glare", "at"] },
+  { raw: "jump at", text: "Many young entrepreneurs would [B] [B] the chance to present their business ideas to a panel of famous investors.", ans: ["jump", "at"] },
+  { raw: "laugh off", text: "The CEO tried to [B] [B] the rumors of a potential hostile takeover, claiming the company's financials were stronger than ever.", ans: ["laugh", "off"] },
+  { raw: "lay off", text: "Due to the severe economic downturn, the manufacturing giant announced plans to [B] [B] over 5,000 factory workers.", ans: ["lay", "off"] },
+  { raw: "make up for", text: "The tech company released a major update for free to [B] [B] [B] the significant bugs in the previous version of the software.", ans: ["make", "up", "for"] },
+  { raw: "pass out", text: "It was so crowded and poorly ventilated at the concert hall that several fans began to [B] [B] from the heat.", ans: ["pass", "out"] },
+  { raw: "pitch in", text: "After the hurricane hit the coast, thousands of volunteers from across the country arrived to [B] [B] with the cleanup efforts.", ans: ["pitch", "in"] },
+  { raw: "settle down", text: "After years of traveling the world as a freelance journalist, she finally decide to [B] [B] and start a family in her hometown.", ans: ["settle", "down"] },
+  { raw: "shoot down", text: "The board of directors was quick to [B] [B] the proposal for the new marketing campaign, citing its excessive budget.", ans: ["shoot", "down"] },
+  { raw: "show up", text: "To maintain a high professional standard, employees must [B] [B] on time for all scheduled department meetings.", ans: ["show", "up"] },
+  { raw: "wipe out", text: "Environmentalists warn that a single major oil spill in this delicate ecosystem could [B] [B] several endangered species.", ans: ["wipe", "out"] },
+  { raw: "bank on", text: "Analysts warn that it is too risky to [B] [B] a quick recovery of the stock market given the current geopolitical instability.", ans: ["bank", "on"] },
+  { raw: "bid for", text: "Several international consortia are expected to [B] [B] the contract to manage the city's new smart-grid infrastructure.", ans: ["bid", "for"] },
+  { raw: "bounce back", text: "The local economy has shown remarkable resilience, [B] [B] quickly after the devastating floods last summer.", ans: ["bouncing", "back"] }
+];
+
+const allNotes = [
+  "unethical = 非倫理的な", "precedent = 前例", "cross-examination = 反対尋問", "entrepreneur = 起業家", "hostile takeover = 敵対的買収", "manufacturing giant = 製造業の巨人", "ventilated = 換気された", "resilience = 回復力", "devastating = 壊滅的な", "reclusive = 隠遁した", "geopolitical instability = 地政学的不安定さ",
+  "economic downturn = 景気後退", "defense attorney = 被告側弁護士", "bug = 不具合/バグ", "board of directors = 取締役会", "international consortia = 国際共同事業体", "smart-grid = 次世代送電網"
+];
+
+let currentLevel = 1;
+let selectedElement = null;
+let wordIdCounter = 0;
+
+function changeLevel(lv) {
+  currentLevel = lv;
+  document.getElementById('level-display').textContent = `Level ${lv}`;
+  generate();
+}
+
+function generate() {
+  const content = document.getElementById('exercise-content');
+  content.innerHTML = '';
+  wordIdCounter = 0;
+  clearSelection();
+
+  let shuffled = [...masterData].sort(() => Math.random() - 0.5);
+  const chunkSize = (currentLevel === 1) ? 4 : 8;
+  const numBlocks = 16 / chunkSize;
+
+  for (let i = 0; i < numBlocks; i++) {
+    const block = document.createElement('div');
+    block.className = 'question-block';
+    const currentItems = shuffled.slice(i * chunkSize, (i + 1) * chunkSize);
+    const blockWords = currentItems.map(item => item.raw).sort(() => Math.random() - 0.5);
+    
+    const wordBank = document.createElement('div');
+    wordBank.className = 'word-bank';
+    const prefix = document.createElement('span');
+    prefix.className = 'group-header';
+    prefix.textContent = `Group ${i + 1}: `;
+    wordBank.appendChild(prefix);
+
+    blockWords.forEach((word) => {
+      const span = document.createElement('span');
+      span.id = 'word-' + (wordIdCounter++);
+      span.className = 'draggable-word';
+      span.textContent = word;
+      const correctItem = currentItems.find(item => item.raw === word);
+      if(correctItem) span.setAttribute('data-answer-pair', JSON.stringify(correctItem.ans));
+      span.addEventListener('click', () => {
+        if (span.classList.contains('used')) return;
+        if (span.classList.contains('selected')) { clearSelection(); }
+        else {
+          clearSelection();
+          span.classList.add('selected');
+          selectedElement = span;
+        }
+      });
+      wordBank.appendChild(span);
+    });
+    block.appendChild(wordBank);
+
+    const sList = document.createElement('div');
+    sList.className = 'sentence-list';
+    currentItems.forEach(item => {
+      const p = document.createElement('div');
+      p.className = 'sentence';
+      let html = item.text;
+      const groupId = Math.random().toString(36).substring(7);
+      item.ans.forEach((val, idx) => {
+        html = html.replace('[B]', `<span class="blank" data-ans="${val}" data-group="${groupId}" data-index="${idx}"></span>`);
+      });
+      p.innerHTML = html;
+      p.querySelectorAll('.blank').forEach(blank => {
+        blank.addEventListener('click', () => {
+          if (selectedElement) {
+            if (blank.classList.contains('filled')) returnPhrasalVerbToBank(blank);
+            fillPhrasalVerb(blank, JSON.parse(selectedElement.getAttribute('data-answer-pair')), selectedElement.id);
+            selectedElement.classList.add('used');
+            clearSelection();
+          } else if (blank.classList.contains('filled')) {
+            returnPhrasalVerbToBank(blank);
+          }
+        });
+      });
+      sList.appendChild(p);
+    });
+    block.appendChild(sList);
+    content.appendChild(block);
+  }
+
+  const nArea = document.getElementById('notes-area');
+  nArea.innerHTML = '';
+  allNotes.sort().forEach(n => {
+    const item = document.createElement('div');
+    item.className = 'notes-item';
+    const parts = n.split(' = ');
+    item.innerHTML = parts.length === 2 ? `<b>${parts[0]}</b> = ${parts[1]}` : n;
+    nArea.appendChild(item);
+  });
+}
+
+function fillPhrasalVerb(targetBlank, answerPair, sourceId) {
+  const groupId = targetBlank.getAttribute('data-group');
+  const siblings = document.querySelectorAll(`.blank[data-group="${groupId}"]`);
+  siblings.forEach((b, i) => {
+    if (answerPair[i]) {
+      b.textContent = answerPair[i];
+      b.classList.add('filled');
+      b.dataset.sourceId = sourceId;
+    }
+  });
+}
+
+function returnPhrasalVerbToBank(targetBlank) {
+  const groupId = targetBlank.getAttribute('data-group');
+  const siblings = document.querySelectorAll(`.blank[data-group="${groupId}"]`);
+  const sourceId = siblings[0].dataset.sourceId;
+  if (sourceId) {
+    const sourceEl = document.getElementById(sourceId);
+    if (sourceEl) sourceEl.classList.remove('used');
+  }
+  siblings.forEach(b => {
+    b.textContent = '';
+    b.classList.remove('filled');
+    b.removeAttribute('data-source-id');
+  });
+}
+
+function clearSelection() {
+  document.querySelectorAll('.draggable-word').forEach(el => el.classList.remove('selected'));
+  selectedElement = null;
+}
+
+function checkAnswers() {
+  document.querySelectorAll('.blank').forEach(b => {
+    const user = b.innerText.trim().toLowerCase();
+    const correct = b.getAttribute('data-ans').toLowerCase();
+    if (!user) return;
+    b.style.color = (user === correct) ? 'var(--success)' : 'var(--accent)';
+  });
+}
+window.addEventListener('load', generate);
+</script>
+</body>
+</html>

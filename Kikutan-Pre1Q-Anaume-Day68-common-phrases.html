@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Pre-1 Day 68 Common Phrases</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* スタイル設定は維持（Day 69と同等） */
+    :root { 
+      --primary: #928c36; 
+      --bg: #1a1a1a; 
+      --text: #e0e0e0;
+      --card-bg: #2a2a2a;
+      --accent: #ffb3b3; 
+      --success: #81c784; 
+      --selected: #c0b94d; 
+    }
+    
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Nunito', 'Kosugi Maru', sans-serif; }
+    .container { width: 210mm; margin: 20px auto; background: var(--card-bg); padding: 10mm 15mm; display: flex; flex-direction: column; box-shadow: 0 4px 20px rgba(0,0,0,0.5); box-sizing: border-box; border-radius: 8px; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); margin-bottom: 15px; padding-bottom: 5px; }
+    .header h1 { font-size: 22px; color: var(--primary); font-weight: 700; margin: 0; letter-spacing: 1px; }
+    .level-badge { font-size: 14px; background: var(--primary); color: white; padding: 2px 10px; border-radius: 12px; font-weight: bold; }
+    .instruction { font-size: 13px; font-weight: bold; color: #bbb; margin: 10px 0 15px 0; padding-left: 10px; border-left: 4px solid var(--primary); }
+    #exercise-content { display: flex; flex-direction: column; gap: 20px; }
+    .question-block { display: flex; flex-direction: column; gap: 10px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 6px; }
+    .word-bank { font-weight: bold; font-size: 14px; color: var(--primary); background: #252525; border: 1px solid var(--primary); padding: 10px; border-radius: 4px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .draggable-word { cursor: pointer; padding: 4px 10px; border-radius: 4px; transition: all 0.2s; border: 1px solid #444; background: #333; color: #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .draggable-word.selected { background: var(--selected); color: #000; border-color: #fff; transform: scale(1.05); }
+    .draggable-word.used { opacity: 0.2; text-decoration: line-through; pointer-events: none; background: #111; }
+    .sentence-list { display: flex; flex-direction: column; gap: 12px; }
+    .sentence { font-size: 15px; line-height: 1.6; color: #ccc; }
+    .blank { display: inline-block; min-width: 140px; border-bottom: 1.5px solid var(--primary); text-align: center; font-weight: bold; color: var(--accent); margin: 0 4px; padding: 0px 8px; cursor: pointer; height: 1.4em; vertical-align: bottom; transition: all 0.3s; }
+    .notes-container { margin-top: 25px; border-top: 1px solid #444; padding-top: 10px; font-size: 11px; color: #888; display: flex; flex-wrap: wrap; gap: 4px 15px; }
+    .notes-item b { color: var(--primary); }
+    .controls { position: fixed; top: 15px; left: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+    button { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
+
+    @media print {
+      @page { size: A4; margin: 7mm 11mm; }
+      body { background: white !important; color: black !important; }
+      .controls, .browser-only, .level-badge, .group-header { display: none !important; }
+      .container { width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; background: white !important; }
+      .header h1 { visibility: hidden; position: relative; height: 26px; margin: 0; }
+      .header h1::after { 
+        content: "英検準1級 Day 68 フレーズ"; 
+        visibility: visible; position: absolute; left: 0; top: 0;
+        color: black !important; font-size: 17pt !important;
+      }
+      .header { border-bottom: 1.5pt solid black !important; margin-bottom: 3.5mm !important; }
+      .instruction { border-left: 2.5pt solid black !important; color: black !important; margin-bottom: 3mm !important; font-size: 9.5pt !important; padding: 0 0 0 8px !important; }
+      .word-bank { background: white !important; border: 1pt solid black !important; color: black !important; padding: 1.3mm !important; margin-bottom: 1.3mm !important; }
+      .draggable-word { border: none !important; background: none !important; color: black !important; padding: 0 !important; box-shadow: none !important; font-size: 10.8pt !important; }
+      .draggable-word::after { content: " / "; }
+      .draggable-word:last-child::after { content: ""; }
+      .question-block { background: none !important; padding: 0 !important; gap: 2.5pt !important; margin-bottom: 1mm !important; }
+      .sentence { color: black !important; font-size: 11pt !important; line-height: 1.1 !important; margin-bottom: 1.7pt !important; }
+      .blank { border-bottom: 1pt solid black !important; color: white !important; min-width: 150px !important; height: 1.2em !important; }
+      .notes-container { border-top: 1pt solid black !important; color: black !important; font-size: 8.8pt !important; margin-top: 4mm !important; gap: 1.4pt 14pt !important; line-height: 1.2 !important; }
+      .notes-item b { color: black !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="controls">
+  <button onclick="changeLevel(1)">Level 1 (Easy)</button>
+  <button onclick="changeLevel(2)" style="background: #6d6929;">Level 2 (Hard)</button>
+  <button onclick="checkAnswers()" style="background: #8b4513;">答え合わせ</button>
+  <button onclick="window.print()" style="background: #4a5d4e;">PDF保存 / 印刷</button>
+</div>
+
+<div class="container">
+  <div class="header">
+    <h1>Pre-1 Day 68 Common Phrases</h1>
+    <span id="level-display" class="level-badge">Level 1</span>
+  </div>
+  <div class="instruction">
+    ★ Fill in the blanks with the correct phrases from the bank.
+  </div>
+  <div id="exercise-content"></div>
+  <div id="notes-area" class="notes-container"></div>
+</div>
+
+<script>
+const masterData = [
+  { raw: "in the meantime", text: "The new stadium is under construction and will not open until next year; [BLOCK], the team will continue to play their home games at the old city park.", ans: "in the meantime" },
+  { raw: "at risk", text: "Medical researchers warn that elderly people living alone are particularly [BLOCK] of social isolation, which can lead to serious mental health issues.", ans: "at risk" },
+  { raw: "for the time being", text: "Although the government plans to fully digitize all tax procedures by 2030, paper forms will remain available [BLOCK] to assist those unfamiliar with technology.", ans: "for the time being" },
+  { raw: "in contrast", text: "The previous administration focused heavily on industrial deregulation. [BLOCK], the current cabinet is introducing strict environmental protections.", ans: "in contrast" },
+  { raw: "in a row", text: "The star athlete made history by winning the gold medal in the marathon for three consecutive Olympic Games [BLOCK].", ans: "in a row" },
+  { raw: "in jeopardy", text: "The historic temple was [BLOCK] after the earthquake, as deep cracks appeared in its wooden foundation and main pillars.", ans: "in jeopardy" },
+  { raw: "in turn", text: "The rise in gas prices led to higher transportation costs, which [BLOCK] caused the price of fresh vegetables at supermarkets to skyrocket.", ans: "in turn" },
+  { raw: "on the spot", text: "During the culinary competition, the chef was asked to create a unique dessert using only three secret ingredients provided [BLOCK].", ans: "on the spot" },
+  { raw: "the other way around", text: "Many people think that happiness leads to professional success, but psychological studies suggest it is often [BLOCK].", ans: "the other way around" },
+  { raw: "all but", text: "By the end of the 19th century, the traditional way of life for many indigenous tribes had [BLOCK] disappeared due to rapid colonization.", ans: "all but" },
+  { raw: "around the clock", text: "After the massive data breach was discovered, the IT security team worked [BLOCK] to patch the vulnerability and secure user accounts.", ans: "around the clock" },
+  { raw: "in shape", text: "Professional football players must follow a strict diet and training regimen throughout the off-season just to stay [BLOCK] for the opening match.", ans: "in shape" },
+  { raw: "as such", text: "The online course is informative, but it is not a university degree [BLOCK], so it may not be recognized by all employers.", ans: "as such" },
+  { raw: "at all costs", text: "The prime minister emphasized that regional stability must be maintained [BLOCK] to prevent a humanitarian crisis in the neighboring countries.", ans: "at all costs" },
+  { raw: "at one's disposal", text: "To promote gender equality, the company ensured that all employees had the same career development resources [BLOCK].", ans: "at their disposal", displayAns: "at one's disposal" },
+  { raw: "nothing more than", text: "The lawyer argued that the evidence against his client was [BLOCK] hearsay and should not be used in a court of law.", ans: "nothing more than" }
+];
+
+const allNotes = [
+  "social isolation = 社会的孤立", "deregulation = 規制緩和", "cabinet = 内閣", "skyrocket = 急騰する", "indigenous = 先住民の", "hearsay = 伝聞/うわさ", "regimen = 訓練計画/養生法"
+];
+
+let currentLevel = 1;
+let selectedElement = null;
+
+function changeLevel(lv) {
+  currentLevel = lv;
+  document.getElementById('level-display').textContent = `Level ${lv}`;
+  generate();
+}
+
+function generate() {
+  const content = document.getElementById('exercise-content');
+  content.innerHTML = '';
+  clearSelection();
+
+  let shuffled = [...masterData].sort(() => Math.random() - 0.5);
+  const chunkSize = (currentLevel === 1) ? 4 : 8;
+  const numBlocks = 16 / chunkSize;
+
+  for (let i = 0; i < numBlocks; i++) {
+    const block = document.createElement('div');
+    block.className = 'question-block';
+    const currentItems = shuffled.slice(i * chunkSize, (i + 1) * chunkSize);
+    const blockWords = currentItems.map(item => item.raw).sort(() => Math.random() - 0.5);
+    
+    const wordBank = document.createElement('div');
+    wordBank.className = 'word-bank';
+    const prefix = document.createElement('span');
+    prefix.className = 'group-header';
+    prefix.textContent = `Group ${i + 1}: `;
+    wordBank.appendChild(prefix);
+
+    blockWords.forEach((word) => {
+      const span = document.createElement('span');
+      span.className = 'draggable-word';
+      span.textContent = word;
+      const item = currentItems.find(it => it.raw === word);
+      span.setAttribute('data-target-ans', item.ans);
+
+      span.addEventListener('click', () => {
+        if (span.classList.contains('used')) return;
+        if (span.classList.contains('selected')) { clearSelection(); }
+        else {
+          clearSelection();
+          span.classList.add('selected');
+          selectedElement = span;
+        }
+      });
+      wordBank.appendChild(span);
+    });
+    block.appendChild(wordBank);
+
+    const sList = document.createElement('div');
+    sList.className = 'sentence-list';
+    currentItems.forEach(item => {
+      const p = document.createElement('div');
+      p.className = 'sentence';
+      // 文頭判定のために [BLOCK] の直前の文字列を保持
+      const blockIndex = item.text.indexOf('[BLOCK]');
+      const preText = item.text.substring(0, blockIndex).trim();
+      const isStartOfSentence = (preText === "" || preText.endsWith('.') || preText.endsWith('!') || preText.endsWith('?'));
+
+      const html = item.text.replace('[BLOCK]', `<span class="blank" data-ans="${item.ans}" data-is-start="${isStartOfSentence}"></span>`);
+      p.innerHTML = html;
+      
+      const blank = p.querySelector('.blank');
+      blank.addEventListener('click', () => {
+        if (selectedElement) {
+          if (blank.classList.contains('filled')) {
+             const prevVal = blank.getAttribute('data-current-val');
+             document.querySelectorAll('.draggable-word.used').forEach(w => {
+               if(w.getAttribute('data-target-ans') === prevVal) w.classList.remove('used');
+             });
+          }
+          
+          let valToFill = selectedElement.getAttribute('data-target-ans');
+          
+          // 文頭なら大文字にする
+          if (blank.getAttribute('data-is-start') === "true") {
+            valToFill = valToFill.charAt(0).toUpperCase() + valToFill.slice(1);
+          }
+
+          blank.textContent = valToFill;
+          blank.setAttribute('data-current-val', selectedElement.getAttribute('data-target-ans'));
+          blank.classList.add('filled');
+          selectedElement.classList.add('used');
+          clearSelection();
+        } else if (blank.classList.contains('filled')) {
+          const val = blank.getAttribute('data-current-val');
+          document.querySelectorAll('.draggable-word.used').forEach(w => {
+            if(w.getAttribute('data-target-ans') === val) w.classList.remove('used');
+          });
+          blank.textContent = '';
+          blank.classList.remove('filled');
+        }
+      });
+      sList.appendChild(p);
+    });
+    block.appendChild(sList);
+    content.appendChild(block);
+  }
+
+  const nArea = document.getElementById('notes-area');
+  nArea.innerHTML = '';
+  allNotes.sort().forEach(n => {
+    const item = document.createElement('div');
+    item.className = 'notes-item';
+    const parts = n.split(' = ');
+    item.innerHTML = parts.length === 2 ? `<b>${parts[0]}</b> = ${parts[1]}` : n;
+    nArea.appendChild(item);
+  });
+}
+
+function clearSelection() {
+  document.querySelectorAll('.draggable-word').forEach(el => el.classList.remove('selected'));
+  selectedElement = null;
+}
+
+function checkAnswers() {
+  document.querySelectorAll('.blank').forEach(b => {
+    const user = b.innerText.trim().toLowerCase();
+    const correct = b.getAttribute('data-ans').toLowerCase();
+    if (!user) return;
+    b.style.color = (user === correct) ? 'var(--success)' : 'var(--accent)';
+  });
+}
+window.addEventListener('load', generate);
+</script>
+</body>
+</html>
